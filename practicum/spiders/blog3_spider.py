@@ -1,22 +1,12 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from scrapy.crawler import CrawlerProcess
 from ..items import PracticumItem
-# urls = list of urls that will be used in the model
 
-selectdic = {'https://www.energyindepth.org/category/blog/':{'article_date':'span.time::text', \
-                                                             'article_title':'.entry_title::text',\
-                                                             'author':'.post_author_link::text',\
-                                                             'article_text':'//p/text()'\
-                                                             }}
-urls = 'https://www.energyindepth.org/category/blog/'
-
-# Each Spider will perform a different function when extracting information
+urls = 'https://www.nrdc.org/blogs/'
 
 
-class BlogSpiderSpider(scrapy.Spider):
-    # name = declaring the name of spider for later use in program
-    name = 'blog_spider'
+class Blog3SpiderSpider(scrapy.Spider):
+    name = 'blog3_spider'
 
     def start_requests(self):
         yield scrapy.Request(url=urls,
@@ -24,8 +14,8 @@ class BlogSpiderSpider(scrapy.Spider):
 
     # First parsing method
     def parse_front(self, response):
-        next_page = response.css('li.next.next_last a::attr(href)').get()
-        article_links = response.xpath('//h2[@class = "entry_title"]/a/@href')
+        next_page = response.css('li.pager-next a::attr(href)').get()
+        article_links = response.xpath('//header[contains(@class, "tab-teaser__header mb-16")]/a/@href')
         links_to_follow = article_links.extract()
         for link in links_to_follow:
             yield response.follow(url=link,
@@ -41,22 +31,20 @@ class BlogSpiderSpider(scrapy.Spider):
 
         # looks at source code but only at a certain html tag in the document
         # html tag for quotes is the div (tag) which is why it is specified first
-        all_blogs = response.css('div.post_text_inner')
+        all_blogs = response.css('div.content')
 
         # this will loop through multiple instances of specified tags in the url
         # this will allow multiple quotes to be extracted from the website
         # extracts the region, article_date, and article_title of each blog
         for blogs in all_blogs:
-            article_date = blogs.css(selectdic[urls]['article_date']).extract()
-            article_title = blogs.css(selectdic[urls]['article_title']).extract()
-            author = blogs.css(selectdic[urls]['author']).extract()
-            article_text = blogs.xpath(selectdic[urls]['article_text']).extract()
-            # if article_text = None:
-            #     article_title='Null'
-            # if article_date = None:
-            #     article_date = 'Null'
-
+            article_title = blogs.xpath('//h1//text()').extract()
+            author = blogs.xpath('//span[contains(@class, "byline-text author-name")]//text()').extract()
+            article_date = blogs.xpath('//span[contains(@class, "byline-text author-date")]//text()').extract()
+            article_text = blogs.xpath('//span[@class = "body-content"]//p//text()').extract()
             twitter = 'no twitter'
+            blogger = ''
+            for blog in author:
+                blogger = blogger + blog
             body = ''
             for text in article_text:
                 body = body + text
@@ -69,19 +57,21 @@ class BlogSpiderSpider(scrapy.Spider):
             # # blog_title = blog_title.replace('\r', '')
             # # blog_title = blog_title.replace('\n', '')
             # # blog_title = blog_title.replace('\t', '')
-            # body = body.replace('\r', '')
-            # body = body.replace('\n', '')
-            # body = body.replace('\t', '')
+            blogger = blogger.replace('\r', '')
+            blogger = blogger.replace('\n', '')
+            blogger = blogger.replace('\t', '')
+            body = body.replace('\r', '')
+            body = body.replace('\n', '')
+            body = body.replace('\t', '')
             # blog_region = blog_region.replace('\r', '')
             # blog_region = blog_region.replace('\n', '')
             # blog_region = blog_region.replace('\t', '')
-
 
             # declares items extracted for each of the following
             items['article_url'] = response.request.url
             items['article_date'] = article_date
             items['article_title'] = article_title
-            items['author'] = author
+            items['author'] = blogger
             items['article_text'] = body
             items['twitter'] = twitter
 
@@ -95,7 +85,3 @@ class BlogSpiderSpider(scrapy.Spider):
         # if next_page is not None:
         # if next_page is not None:
         #    yield response.follow(next_page, callback=self.parse_front)
-
-
-
-

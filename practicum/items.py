@@ -12,10 +12,11 @@ class PracticumItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     # link = scrapy.Field()
-    region = scrapy.Field()
-    # author = scrapy.Field()
+    article_url = scrapy.Field()
+    twitter = scrapy.Field()
+    author = scrapy.Field()
     article_title = scrapy.Field()
     article_date = scrapy.Field()
-    # article_text = scrapy.Field()
+    article_text = scrapy.Field()
     # name = scrapy.Field()
     pass
