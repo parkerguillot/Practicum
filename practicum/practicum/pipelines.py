@@ -42,10 +42,10 @@ class PracticumPipeline(object):
     def store_db(self, item):
         self.cursor.execute("insert into blogs values (%s,%s,%s,%s,%s,%s)", (
             item['article_url'],
-            item['article_date'][0],
-            item['article_title'][0],
+            item['article_date'],
+            item['article_title'],
             item['article_text'],
-            item['author'][0],
+            item['author'],
             item['twitter']
         ))
 

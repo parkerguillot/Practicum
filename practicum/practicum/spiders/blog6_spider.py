@@ -55,6 +55,10 @@ class Blog6SpiderSpider(scrapy.Spider):
             items['article_date'] = article_date[0]
         else:
             items['article_date'] = ''
+        if len(article_date) > 0:
+            items['article_title'] = article_title[0]
+        else:
+            items['article_title'] = ''
         # article_title = article_title.replace('\r', '')
         # article_title = article_title.replace('\n', '')
         # article_title = article_title.replace('\t', '')
@@ -72,7 +76,7 @@ class Blog6SpiderSpider(scrapy.Spider):
         items['article_url'] = response.request.url
         # items['article_date'] = article_date
         # items['twitter'] = twitter
-        items['article_title'] = article_title
+        # items['article_title'] = article_title
         # items['author'] = author
         items['article_text'] = body
 
