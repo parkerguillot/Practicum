@@ -1,4 +1,5 @@
-# BCBSLA Emerging Topic Identification Using Natural Language Processing - User Manual
+# Blue Cross Blue Shield of Louisiana
+## Media Predictors of Healthcare Influencers
 
 This is an outline of the README.txt file for the 2020 MSA Consultants - BCBSLA Emerging Topics Project
 
